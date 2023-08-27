@@ -6,6 +6,10 @@ export default defineNuxtConfig({
   footballCaptcha: {
     assetsPath: path.resolve('./footballCaptchaAssets')
   },
+  routeRules: {
+    // Use client-side rendering for all routes
+    '/**': { ssr: false },
+  },
   vite: {
     vue: {
       script: {
@@ -13,4 +17,7 @@ export default defineNuxtConfig({
       },
     },
   },
+  nitro: {
+    preset: 'vercel-edge',
+  }
 })
