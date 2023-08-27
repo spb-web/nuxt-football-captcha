@@ -3,6 +3,7 @@ import { handleGetContest } from './handleGetContest'
 import { handleSession } from './handleSession'
 import { handleCheckSolution } from './handleCheckSolution'
 import { loadAssets } from './utils/assetsStore'
+import { eventHandler } from 'h3'
 
 export type FootballCaptchaHandlerOptions = {
   session: {
@@ -27,6 +28,9 @@ export type FootballCaptchaHandlerOptions = {
       dir: string,
     },
     background: {
+      dir: string,
+    },
+    interactiveObjects: {
       dir: string,
     }
   },

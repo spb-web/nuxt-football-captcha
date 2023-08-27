@@ -1,8 +1,11 @@
-import { defineNuxtModule, addPlugin, createResolver, addComponent, addImports, addServerHandler } from '@nuxt/kit'
+import { defineNuxtModule, addPlugin, createResolver, addComponent, addImports, addTemplate } from '@nuxt/kit'
+import defu from 'defu'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
-  assetsPath: string
+  component: {
+    global: boolean
+  }
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -12,7 +15,9 @@ export default defineNuxtModule<ModuleOptions>({
   },
   // Default configuration options of the Nuxt module
   defaults: {
-    assetsPath: './footballCaptchaAssets',
+    component: {
+      global: false,
+    }
   },
   setup (options, nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -23,7 +28,8 @@ export default defineNuxtModule<ModuleOptions>({
     addComponent({
       name: 'FootballCaptcha', // name of the component to be used in vue templates
       export: 'default', // (optional) if the component is a named (rather than default) export
-      filePath: resolver.resolve('./runtime/components/FootballCaptcha.vue')
+      filePath: resolver.resolve('./runtime/components/FootballCaptcha.vue'),
+      global: options.component.global,
     })
 
     addImports({
@@ -32,14 +38,32 @@ export default defineNuxtModule<ModuleOptions>({
       from: resolver.resolve('./runtime/composables/useFootballCaptcha') // path of composable 
     })
 
-    // addServerHandler({
-    //   route: '/api/footballCaptcha',
-    //   handler: resolver.resolve('./runtime/server/api/footballCaptcha.get.ts')
-    // })
+    // 5. Create virtual imports for server-side
+    nuxt.hook('nitro:config', (nitroConfig) => {
+      nitroConfig.alias = nitroConfig.alias || {}
 
-    // addServerHandler({
-    //   route: '/api/footballCaptcha/check',
-    //   handler: resolver.resolve('./runtime/server/api/footballCaptcha.post.ts')
-    // })
+      // Inline module runtime in Nitro bundle
+      nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
+        inline: [resolver.resolve('./runtime')]
+      })
+      nitroConfig.alias['#football-captcha'] = resolver.resolve('./runtime/server/service')
+      nitroConfig.alias['#football-captcha-component'] = resolver.resolve('./runtime/components/FootballCaptcha.vue')
+    })
+
+    addTemplate({
+      filename: 'types/nuxt-football-captcha.d.ts',
+      getContents: () => [
+        'declare module \'#football-captcha\' {',
+        `  const FootballCaptchaHandler: typeof import('${resolver.resolve('./runtime/server/service')}').FootballCaptchaHandler`,
+        '}',
+        'declare module \'#football-captcha-component\' {',
+        `  const FootballCaptchaHandler: typeof import('${resolver.resolve('./runtime/components/FootballCaptcha.vue')}').default`,
+        '}'
+      ].join('\n')
+    })
+
+    nuxt.hook('prepare:types', (options) => {
+      options.references.push({ path: resolver.resolve(nuxt.options.buildDir, 'types/nuxt-football-captcha.d.ts') })
+    })
   }
 })

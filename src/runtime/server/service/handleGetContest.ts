@@ -1,7 +1,7 @@
 import type { H3Event } from 'h3'
 import { generateContest } from './utils/generateContest'
 import { uint8ArrayToUtf8 } from 'pack-bytes-to-utf8'
-import { dataDividerChar, excludeCharacters, shapeFields } from '../constants/footballCaptcha'
+import { dataDividerChar, excludeCharacters, shapeFields } from '../../constants/footballCaptcha'
 import { FootballCaptchaHandlerOptions } from './FootballCaptchaHandler'
 import { type FootballCaptchaSession } from './handleSession'
 

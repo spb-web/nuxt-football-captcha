@@ -1,6 +1,6 @@
 import mitt from 'mitt'
 import {uint8ArrayToUtf8} from 'pack-bytes-to-utf8'
-import { dataDividerSymbol } from './constants/footballCaptcha'
+import {excludeCharacters} from './constants/footballCaptcha'
 
 export const EMIT_SYMBOL = Symbol('FootballCaptchaState:emit')
 export const MITT_SYMBOL = Symbol('FootballCaptchaState:mitt')
@@ -70,7 +70,7 @@ export class FootballCaptchaState {
         const data = new Uint16Array(this[POINTS_SYMBOL].points.flat())
         const result = uint8ArrayToUtf8(
             new Uint8Array(data.buffer, data.byteOffset, data.byteLength),
-            new Set([dataDividerSymbol])
+            excludeCharacters,
         );
 
         return result

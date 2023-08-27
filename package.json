@@ -1,6 +1,6 @@
 {
   "name": "nuxt-football-captcha",
-  "version": "1.0.0",
+  "version": "0.0.0-k",
   "description": "My new Nuxt module",
   "repository": "your-org/my-module",
   "license": "MIT",
@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.7.0",
+    "defu": "^6.1.2",
     "mande": "^2.0.7",
     "mitt": "^3.0.1",
     "nanoid": "^4.0.2",

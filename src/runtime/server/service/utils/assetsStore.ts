@@ -9,6 +9,7 @@ type ObjectsAssets = {
 }
 let isLoaded = false
 let objectsAssets: ObjectsAssets[] = []
+let interactiveObjects: ObjectsAssets[] = []
 
 let backgroundAssets: {
   bitmap: Buffer,
@@ -40,6 +41,18 @@ export const loadAssets = async (options: FootballCaptchaHandlerOptions) => {
     async (file) => {
       return {
         bitmap: await fs.readFile(path.join(options.assets.background.dir, file)),
+      }
+    }
+  )
+
+  const files3 = await fs.readdir(options.assets.interactiveObjects.dir)
+
+  interactiveObjects = await pMap(
+    files3.filter(file => file.endsWith('.png')),
+    async (file) => {
+      return {
+        bitmap: await fs.readFile(path.join(options.assets.interactiveObjects.dir, file)),
+        config: [],
       }
     }
   )

@@ -1,4 +1,4 @@
-import {FootballCaptchaHandler} from '../../../src/provider/FootballCaptchaHandler'
+import {FootballCaptchaHandler} from '#football-captcha'
 
 export default FootballCaptchaHandler({
   session: {

@@ -1,13 +1,17 @@
 import { type MandeInstance, mande } from 'mande'
 import { utf8ToUint8Array } from 'pack-bytes-to-utf8'
-import { dataDividerSymbol, shapeFields } from './constants/footballCaptcha'
+import { dataDividerChar, shapeFields } from './constants/footballCaptcha'
 
 export class FootballCaptchaApi {
-    private api: MandeInstance
+  private api: MandeInstance
 
-    constructor(basePath: string = '/') {
-        this.api = mande(basePath)
-    }
+  constructor(basePath: string = '/') {
+    this.api = mande(basePath)
+  }
+
+  setApi(api: string) {
+    this.api = mande(api)
+  }
 
     public async loadCaptcha() {
         const result = await this.api.get({
@@ -16,7 +20,7 @@ export class FootballCaptchaApi {
             },
             responseAs: 'text',
         })
-        const [idBin, shapesBin, description, imageBin] = result.split(String.fromCharCode(dataDividerSymbol))
+        const [idBin, shapesBin, description, imageBin] = result.split(dataDividerChar)
         const shapesData = new Uint16Array(utf8ToUint8Array(shapesBin).buffer)
         const shapes = []
 
@@ -47,7 +51,7 @@ export class FootballCaptchaApi {
     public async checkResult(id: string, solution: string) {
         const result = await this.api.post(
             '',
-            [id, solution].join(String.fromCharCode(dataDividerSymbol)),
+            [id, solution].join(dataDividerChar),
             {
                 headers: {
                     'Content-Type': 'text/html',

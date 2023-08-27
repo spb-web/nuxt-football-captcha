@@ -1,8 +1,8 @@
-import type { H3Event } from 'h3'
+import { type H3Event, readRawBody } from 'h3'
 import { type FootballCaptchaHandlerOptions } from './FootballCaptchaHandler'
 import { type FootballCaptchaSession } from './handleSession'
 import { checkSolution } from './utils/checkSolution'
-import { dataDividerChar } from '../constants/footballCaptcha'
+import { dataDividerChar } from '../../constants/footballCaptcha'
 import { utf8ToUint8Array } from 'pack-bytes-to-utf8'
 
 export const handleCheckSolution = async (
